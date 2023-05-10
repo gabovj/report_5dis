@@ -826,18 +826,57 @@ for paragraph in doc.paragraphs:
         paragraph.text = paragraph.text.replace('{comportamiento}', bullet_comportamiento)      
 
 # Save the Word document with the new content
-doc.save('updated_word_document.docx')
+doc.save('5dis'+f'{empresa_str}.odt')
+
+import cloudconvert
+import os
+import time
+cloudconvert_key = st.secrets["cloudconvert_key"]
+
+cloudconvert.configure(api_key='cloudconvert_key')
+
+job = cloudconvert.Job.create(payload={
+    "tasks": {
+        'upload-my-file': {
+            'operation': 'import/upload'
+        },
+        'convert-my-file': {
+            'operation': 'convert',
+            'input': 'upload-my-file',
+            'output_format': 'pdf'
+        },
+        'export-my-file': {
+            'operation': 'export/url',
+            'input': 'convert-my-file'
+        }
+    }
+})
+
+upload_task_id = job['tasks'][0]['id']
+upload_task = cloudconvert.Task.find(id=upload_task_id)
+res = cloudconvert.Task.upload(file_name='5dis'+f'{empresa_str}.odt', task=upload_task)
+
+exported_url_task_id = [task for task in job['tasks']
+                        if task['name'] == 'export-my-file'][0]['id']
+res = cloudconvert.Task.wait(id=exported_url_task_id)
+
+file = res.get("result").get("files")[0]
+link = file['url']
 
 with st.sidebar:
     
     # # Create a button, but only if the code has run successfully
     # Read the .docx file as binary
-    with open('updated_word_document.docx', 'rb') as file:
+    with open('updated_word_document.odt', 'rb') as file:
         bytes_data = file.read()
     
     st.download_button(
         label="Download report in word",
         data=bytes_data,
-        file_name="5dis_"+f"{empresa_str}.docx",
+        file_name="5dis_"+f"{empresa_str}.odt",
         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+
+    st.markdown(
+        f"""<a href="{link}"> GET PDF</a>""", unsafe_allow_html=True,
     )
