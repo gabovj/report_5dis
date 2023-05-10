@@ -772,7 +772,7 @@ def replace_placeholder_with_text_in_table(table, placeholder, text):
 
 
 # Open the existing Word document
-doc = Document('Disfunciones de un equipo GTC.docx')
+doc = Document('Disfunciones de un equipo GTC_u.docx')
 
 # Replace placeholders with images
 for paragraph in doc.paragraphs:
