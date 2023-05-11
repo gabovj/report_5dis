@@ -833,7 +833,7 @@ import os
 import time
 cloudconvert_key = st.secrets["cloudconvert_key"]
 
-cloudconvert.configure(api_key='cloudconvert_key')
+cloudconvert.configure(api_key=cloudconvert_key)
 
 job = cloudconvert.Job.create(payload={
     "tasks": {
