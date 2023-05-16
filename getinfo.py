@@ -51,32 +51,34 @@ with st.sidebar:
     empresa = st.multiselect(
         "Elige las empresas para las que deseas generar el reporte", unique_empresas_list
     )
-    
-    
-# Join the elements in the list with a comma and a space
-empresa_str = ', '.join(empresa)
-st.subheader('Empresas seleccionadas para generar reporte: ' + empresa_str)
-# generate a filtered data frame with the companies selected
-filtered_df = df[df['empresa'].isin(empresa)]
-filtered_df_numeric = filtered_df.drop(['empresa', 'q17', 'q18', 'q20', 'q21'], axis=1)
-average_values = filtered_df_numeric.mean()
-confianza = average_values['q4'] + average_values['q6'] + average_values['q12']
-conflicto = average_values['q1'] + average_values['q7'] + average_values['q10']
-compromiso = average_values['q3'] + \
-    average_values['q8'] + average_values['q13']
-responsabilidad = average_values['q2'] + \
-    average_values['q11'] + average_values['q14']
-enfoque_resultados = average_values['q5'] + \
-    average_values['q9'] + average_values['q15']
+    generate_button = st.button('generate report')
 
-st.dataframe(filtered_df)
+if generate_button:
+    
+    # Join the elements in the list with a comma and a space
+    empresa_str = ', '.join(empresa)
+    st.subheader('Empresas seleccionadas para generar reporte: ' + empresa_str)
+    # generate a filtered data frame with the companies selected
+    filtered_df = df[df['empresa'].isin(empresa)]
+    filtered_df_numeric = filtered_df.drop(['empresa', 'q17', 'q18', 'q20', 'q21'], axis=1)
+    average_values = filtered_df_numeric.mean()
+    confianza = average_values['q4'] + average_values['q6'] + average_values['q12']
+    conflicto = average_values['q1'] + average_values['q7'] + average_values['q10']
+    compromiso = average_values['q3'] + \
+        average_values['q8'] + average_values['q13']
+    responsabilidad = average_values['q2'] + \
+        average_values['q11'] + average_values['q14']
+    enfoque_resultados = average_values['q5'] + \
+        average_values['q9'] + average_values['q15']
 
-col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("Confianza", confianza)
-col2.metric("Conflicto", conflicto)
-col3.metric("Compromiso", compromiso)
-col4.metric("Responsabilidad", responsabilidad)
-col5.metric("Enfoque en resultados", enfoque_resultados)
+    st.dataframe(filtered_df)
+
+    col1, col2, col3, col4, col5 = st.columns(5)
+    col1.metric("Confianza", confianza)
+    col2.metric("Conflicto", conflicto)
+    col3.metric("Compromiso", compromiso)
+    col4.metric("Responsabilidad", responsabilidad)
+    col5.metric("Enfoque en resultados", enfoque_resultados)
 
 st.subheader("Resultados")
 # Bar plot
