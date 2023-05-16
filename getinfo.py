@@ -16,6 +16,9 @@ from docx import Document
 from docx.shared import Inches
 from kaleido.scopes.plotly import PlotlyScope
 from PIL import Image 
+import cloudconvert
+import os
+import time
 
 
 # Google connection
@@ -830,9 +833,23 @@ for paragraph in doc.paragraphs:
 # Save the Word document with the new content
 doc.save('5dis'+f'{empresa_str}.odt')
 
-import cloudconvert
-import os
-import time
+
+
+
+with st.sidebar:
+    
+    # # Create a button, but only if the code has run successfully
+    # Read the .docx file as binary
+    with open('5dis'+f'{empresa_str}.odt', 'rb') as file:
+        bytes_data = file.read()
+    
+    st.download_button(
+        label="Download report in word",
+        data=bytes_data,
+        file_name="5dis_"+f"{empresa_str}.odt",
+        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
+
 cloudconvert_key = st.secrets["cloudconvert_key"]
 
 cloudconvert.configure(api_key=cloudconvert_key)
@@ -866,19 +883,6 @@ file = res.get("result").get("files")[0]
 link = file['url']
 
 with st.sidebar:
-    
-    # # Create a button, but only if the code has run successfully
-    # Read the .docx file as binary
-    with open('5dis'+f'{empresa_str}.odt', 'rb') as file:
-        bytes_data = file.read()
-    
-    st.download_button(
-        label="Download report in word",
-        data=bytes_data,
-        file_name="5dis_"+f"{empresa_str}.odt",
-        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    )
-
     st.markdown(
         f"""<a href="{link}"> GET PDF</a>""", unsafe_allow_html=True,
     )
